@@ -21,11 +21,18 @@ import urllib2
 import web
 
 urls = (
-    '/(.*)/(.*)', 'bus',
+    '/(.*)/(.*)', 'Bus',
+	'/', 'Index'
 )
+
+render = web.template.render('templates/')
 app = web.application(urls, globals())
 
-class bus:        
+class Index(object):
+	def GET(self):		
+		return render.index("fuck")
+
+class Bus(object):
     def GET(self, origin, dest):
         # Get the bus stop number and relevant bus numbers to destination
 

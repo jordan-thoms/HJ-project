@@ -1,0 +1,38 @@
+/* Reset everything */
+*
+{
+	margin:0;
+	padding:0;
+	border:0;
+}
+
+body
+{
+	font-size: 13px;
+	font-family: Arial,"helvetica neue",Helvetica,Verdana,sans-serif;
+	padding: 0;
+	margin: auto;
+	width: 640px;
+}
+
+#header {
+	height: 117px;
+}
+
+#main {
+	height: 100px;
+	width: 640px;
+	margin: 10px;
+}
+
+.separater {
+	height:1px;
+	background:#717171;
+	border-bottom:1px solid #313030;
+}
+
+#footer {
+	margin-top:10px;
+	margin-bottom:10px;
+	text-align:center;
+}
