@@ -22,18 +22,11 @@ import web
 
 urls = (
     '/route/(.*)/(.*)', 'route',
-    '/(.*)/(.*)', 'Bus',
-    '/', 'Index'
+    '/(.*)/(.*)', 'bus',
 )
-
-render = web.template.render('templates/')
 app = web.application(urls, globals())
 
-class Index(object):
-	def GET(self):		
-		return render.index("fuck")
-
-class Bus(object):
+class bus:        
     def GET(self, origin, dest):
         # Get the bus stop number and relevant bus numbers to destination
 
@@ -71,7 +64,7 @@ class route:
                 steps =  route_table.findAll('tr')
                 output = ""
                 for step in steps:
-                        output += str(step) + "\n\n\n"
+                        output += str(step) + "<br /><br />"
                 
                 return output
 
