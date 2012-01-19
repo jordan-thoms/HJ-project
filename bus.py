@@ -22,18 +22,18 @@ import web
 
 urls = (
     '/route/(.*)/(.*)', 'route',
-    '/(.*)/(.*)', 'Bus',
+    '/stop/(.*)', 'BusStopSchedule',
     '/', 'Index'
 )
 
-render = web.template.render('templates/')
+render = web.template.render('templates/', base='template_layout')
 app = web.application(urls, globals())
 
 class Index(object):
 	def GET(self):		
-		return render.index("fuck")
+		return render.index()
 
-class Bus(object):
+class BusStopSchedule(object):
     def GET(self, origin, dest):
         # Get the bus stop number and relevant bus numbers to destination
 
@@ -55,10 +55,10 @@ class Bus(object):
 			incoming_bus_number = row.contents[1].contents
 			incoming_bus_dest = row.contents[3].contents # bound dest
 			incoming_bus_due = row.contents[5].contents # in minutes
-			
+
 			bus_stop_parsed.append({'bus_number': incoming_bus_number, 'bus_dest': incoming_bus_dest, 'bus_due': incoming_bus_due})
 		
-		return bus_stop_parsed
+		return render.bus_stop_schedule()
 
 class route:
 	def GET(self, origin, dest):
