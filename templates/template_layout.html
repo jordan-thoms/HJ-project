@@ -12,18 +12,25 @@ $def with (content)
     <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js"></script>
     <script>
 		dojo.require("dijit.form.ComboBox");
-		dojo.require("dojo.store.Memory");
 		dojo.require("dojox.data.QueryReadStore");
 
         dojo.ready(function(){
 	
-			var comboBox = new dijit.form.ComboBox({
+			var comboBoxOrigin = new dijit.form.ComboBox({
 	            id: "origin",
 	            name: "origin",
-	            value: "California",
+	            value: "",
 	            store: new dojox.data.QueryReadStore({url:'/json_search_addr/'}),
 	            searchAttr: "address"
 	        }, "origin");
+	
+			var comboBoxDestination = new dijit.form.ComboBox({
+	            id: "destination",
+	            name: "destination",
+	            value: "",
+	            store: new dojox.data.QueryReadStore({url:'/json_search_addr/'}),
+	            searchAttr: "address"
+	        }, "destination");
 		});
     </script>
 </head>

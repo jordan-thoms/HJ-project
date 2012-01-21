@@ -71,6 +71,10 @@ class SearchAddressWrapper(Common):
 			if address.endswith("*"):
 				address = address[:-1]
 			
+			# enforce a minimum length before searching
+			if len(address) <= 3:
+				return result 
+			
 			url = "http://journeyplanner.maxx.co.nz/iptis/ajax/locations-jsonp.asp?" + urllib.urlencode({'term': address})
 			response = self.request(url)
 			response_text = response.read()
