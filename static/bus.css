@@ -8,11 +8,20 @@
 
 body
 {
-	font-size: 13px;
-	font-family: Arial,"helvetica neue",Helvetica,Verdana,sans-serif;
+	font-size: 0.8em;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
 	padding: 0;
 	margin: auto;
 	width: 640px;
+}
+
+input {
+	font-weight: normal;
+	cursor: pointer;
+	vertical-align: middle;
+	padding: 0 3px;
+	font-size: 1em;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
 }
 
 #header {
@@ -22,7 +31,17 @@ body
 #main {
 	height: 100px;
 	width: 640px;
-	margin: 10px;
+	margin: 20px;
+	margin-left: 30px;
+}
+
+#where_to_form li {
+	list-style-type: none;
+	display: block;
+}
+
+#where_to_form ul {
+	list-style-position: inside;
 }
 
 .separater {

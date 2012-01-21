@@ -15,20 +15,76 @@ import sys
 import os
 from BeautifulSoup import BeautifulSoup	# For processing HTML
 
-import urllib
-import urllib2
+import json
+import urllib2, urllib
 
 import web
 from web import form
 
+USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7"
+
 urls = (
     '/route', 'Route',
     '/stop/(.*)', 'BusStopSchedule',
-    '/', 'Index'
+    '/', 'Index',
+	'/json_search_addr/', 'SearchAddressWrapper',
 )
 
 render = web.template.render('templates/', base='template_layout')
 app = web.application(urls, globals())
+
+class Common(object):
+	def request(self, url):
+		headers = {'User-Agent' : USER_AGENT}
+		
+		try:
+			request = urllib2.Request(url=url, headers=headers)
+			response = urllib2.urlopen(request)
+		except Exception:
+			# Raise exception for now, but in future we should do something
+			# graceful
+			raise
+		
+		return response
+
+class SearchAddressWrapper(Common):
+	'''
+	Wrap around the MAXX JSON API
+	'''
+	
+	def GET(self):
+		return self.handle_request()
+	def POST(self):
+		return self.handle_request()
+	
+	def handle_request(self):
+		user_input = web.input(address="")
+		
+		result = {'identifier:': '', 'items': []}
+		
+		if user_input.address:
+			# because user_input can be unicode
+			address = str(user_input.address)
+			
+			# dojo likes to put a * (wildcard) at the end of address
+			# detect for it and remove it
+			if address.endswith("*"):
+				address = address[:-1]
+			
+			url = "http://journeyplanner.maxx.co.nz/iptis/ajax/locations-jsonp.asp?" + urllib.urlencode({'term': address})
+			response = self.request(url)
+			response_text = response.read()
+			
+			# dirty hack to clean this string to be loaded by json
+			parse_text = response_text[1:]
+			parse_text = parse_text[:-2] 
+			parse_list = json.loads(parse_text)
+			
+			for address in parse_list:
+				# dojo configured to search for keys named 'address'
+				result['items'].append({'address': str(address['label'])})
+			
+		return result
 
 class Index(object):	
 	def GET(self):		
@@ -43,8 +99,7 @@ class BusStopSchedule(object):
 		filter_bus_number: Return only buses found in this list. Default is return all buses
 		'''
 
-		headers = {'User-Agent' : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7"}
-		
+		headers = {'User-Agent' : USER_AGENT}
 		request = urllib2.Request(url=("http://m.maxx.co.nz/mobile-departure-board.aspx?stop=" + str(bus_stop_number)), headers=headers)
 		response = urllib2.urlopen(request)
 

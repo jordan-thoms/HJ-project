@@ -5,14 +5,29 @@ $def with (content)
 	<meta charset="utf-8">
 	<title>Bus</title>
 	<link rel="stylesheet" href="./static/bus.css">
-	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dijit/themes/claro/claro.css" media="screen">
-	<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.7.1/dojo/dojo.js" data-dojo-config="isDebug: true, async: true, parseOnLoad: true"></script>
-	<script>
-		require(['dojo/_base/kernel'], function(dojo){
-		})
-	</script>
+	<style type="text/css">
+	  /* bring in the claro theme */
+	  @import "http://ajax.googleapis.com/ajax/libs/dojo/1.6/dijit/themes/claro/claro.css";
+	</style>
+    <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js"></script>
+    <script>
+		dojo.require("dijit.form.ComboBox");
+		dojo.require("dojo.store.Memory");
+		dojo.require("dojox.data.QueryReadStore");
+
+        dojo.ready(function(){
+	
+			var comboBox = new dijit.form.ComboBox({
+	            id: "origin",
+	            name: "origin",
+	            value: "California",
+	            store: new dojox.data.QueryReadStore({url:'/json_search_addr/'}),
+	            searchAttr: "address"
+	        }, "origin");
+		});
+    </script>
 </head>
-<body id="body class="claro">
+<body id="body" class="claro">
 	<div id="header"><img width="640" src="./static/Bus_logo.gif"/></div>
 	<div class="separater"></div>
 	<div id="main">
