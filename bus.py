@@ -34,14 +34,14 @@ class Index(object):
 		return render.index()
 
 class BusStopSchedule(object):
-    def GET(self, origin, dest):
-        # Get the bus stop number and relevant bus numbers to destination
-
-		# Assuming we know it, for dev purposes, we'll hardcode this
-		# 7148 - 36 Symonds St - S3
-		bus_stop_number = 7148
+    def GET(self, bus_stop_number=7148, filter_bus_number=[]):
+        '''
+		Get the bus stop number and relevant bus numbers to destination
 		
-		# ?stop=7148
+		bus_stop_number:
+		filter_bus_number: Return only buses found in this list. Default is return all buses
+		'''
+
 		headers = { 'User-Agent' : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7" }
 		
 		request = urllib2.Request(url=("http://m.maxx.co.nz/mobile-departure-board.aspx?stop=" + str(bus_stop_number)), headers=headers)
@@ -56,9 +56,15 @@ class BusStopSchedule(object):
 			incoming_bus_dest = row.contents[3].contents # bound dest
 			incoming_bus_due = row.contents[5].contents # in minutes
 
-			bus_stop_parsed.append({'bus_number': incoming_bus_number, 'bus_dest': incoming_bus_dest, 'bus_due': incoming_bus_due})
+			# return only relevant bus data that I care about
+			if filter_bus_number:
+				# check if you can do that with lists
+				if incoming_bus_number in filter_bus_number:
+					bus_stop_parsed.append({'bus_number': incoming_bus_number, 'bus_dest': incoming_bus_dest, 'bus_due': incoming_bus_due})
+			else:
+				bus_stop_parsed.append({'bus_number': incoming_bus_number, 'bus_dest': incoming_bus_dest, 'bus_due': incoming_bus_due})
 		
-		return render.bus_stop_schedule()
+		return render.bus_stop_schedule(bus_stop_parsed)
 
 class route:
 	def GET(self, origin, dest):
