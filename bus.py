@@ -19,9 +19,10 @@ import urllib
 import urllib2
 
 import web
+from web import form
 
 urls = (
-    '/route/(.*)/(.*)', 'route',
+    '/route', 'Route',
     '/stop/(.*)', 'BusStopSchedule',
     '/', 'Index'
 )
@@ -29,24 +30,24 @@ urls = (
 render = web.template.render('templates/', base='template_layout')
 app = web.application(urls, globals())
 
-class Index(object):
+class Index(object):	
 	def GET(self):		
 		return render.index()
 
 class BusStopSchedule(object):
-    def GET(self, bus_stop_number=7148, filter_bus_number=[]):
-        '''
+	def GET(self, bus_stop_number=7148, filter_bus_number=[]):
+		'''
 		Get the bus stop number and relevant bus numbers to destination
 		
 		bus_stop_number:
 		filter_bus_number: Return only buses found in this list. Default is return all buses
 		'''
 
-		headers = { 'User-Agent' : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7" }
+		headers = {'User-Agent' : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7"}
 		
 		request = urllib2.Request(url=("http://m.maxx.co.nz/mobile-departure-board.aspx?stop=" + str(bus_stop_number)), headers=headers)
 		response = urllib2.urlopen(request)
-		
+
 		soup = BeautifulSoup(response)
 		incoming_buses = soup.findAll('tr', attrs={'data-theme' : 'a'})
 		
@@ -66,10 +67,14 @@ class BusStopSchedule(object):
 		
 		return render.bus_stop_schedule(bus_stop_parsed)
 
-class route:
-	def GET(self, origin, dest):
-		origin = '1 George Street, Newmarket'
-		destination = 'University Of Auckland Clocktower'
+class Route:
+	def GET(self):
+		
+		user_input = web.input(origin="1 George Street, Newmarket", destination="University Of Auckland Clocktower")
+		
+		origin = user_input.origin
+		destination = user_input.destination
+
 		request = urllib2.Request(url=("http://m.maxx.co.nz/mobile-journey-detail.aspx?jp-form-from=1%20George%20Street,%20Newmarket&jp-form-from-coords=&jp-form-to=University%20Of%20Auckland%20Clocktower&jp-form-to-coords=&jp-form-leave-arrive=A&jp-form-hour=08&jp-form-minute=30&jp-form-ampm=PM&jp-form-date=16-01-2012&jp-form-index=2"))
 		response = urllib2.urlopen(request)
                 soup = BeautifulSoup(response)
@@ -81,6 +86,16 @@ class route:
                 
                 return output
 
+	def POST(self):
+		'''
+		When form gets posted, it calls POST method
+		'''
+		user_input = web.input(origin="1 George Street, Newmarket", destination="University Of Auckland Clocktower")
+		
+		origin = user_input.origin
+		destination = user_input.destination
+		
+		print origin
 
 if __name__ == "__main__":
     app.run()
