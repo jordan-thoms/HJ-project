@@ -104,6 +104,8 @@ class BusStopSchedule(object):
 		'''
 
 		headers = {'User-Agent' : USER_AGENT}
+                headers = { 'User-Agent' : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7" }
+		
 		request = urllib2.Request(url=("http://m.maxx.co.nz/mobile-departure-board.aspx?stop=" + str(bus_stop_number)), headers=headers)
 		response = urllib2.urlopen(request)
 
@@ -131,10 +133,10 @@ class Route:
 		
 		user_input = web.input(origin="1 George Street, Newmarket", destination="University Of Auckland Clocktower")
 		
-		origin = user_input.origin
-		destination = user_input.destination
+                url_params = urllib.urlencode({'jp-form-from': user_input.origin, 'jp-form-to': user_input.destination})
 
-		request = urllib2.Request(url=("http://m.maxx.co.nz/mobile-journey-detail.aspx?jp-form-from=1%20George%20Street,%20Newmarket&jp-form-from-coords=&jp-form-to=University%20Of%20Auckland%20Clocktower&jp-form-to-coords=&jp-form-leave-arrive=A&jp-form-hour=08&jp-form-minute=30&jp-form-ampm=PM&jp-form-date=16-01-2012&jp-form-index=2"))
+		request = urllib2.Request(url=("http://m.maxx.co.nz/mobile-journey-detail.aspx?jp-form-to-coords=&jp-form-leave-arrive=A&jp-form-hour=08&jp-form-minute=30&jp-fo-ampm=PM&jp-form-date=16-01-2012&jp-form-index=1&" + url_params))
+
 		response = urllib2.urlopen(request)
                 soup = BeautifulSoup(response)
                 route_table = soup.find('table', {'id': 'journey-details'})
