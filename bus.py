@@ -152,6 +152,11 @@ class BusStopSchedule(Common):
 
 class Route:
     def GET(self):
+        return self.handle_request()
+        
+    def POST(self):
+        return self.handle_request()
+    def handle_request(self):
         user_input = web.input(origin="1 George Street, Newmarket", destination="University Of Auckland Clocktower")
         
         url_params = urllib.urlencode({'jp-form-from': user_input.origin, 'jp-form-to': user_input.destination})
@@ -168,17 +173,5 @@ class Route:
             output += str(step) + "\n\n\n"
 
             return output
-    
-    def POST(self):
-        '''
-        When form gets posted, it calls POST method
-        '''
-        user_input = web.input(origin="1 George Street, Newmarket", destination="University Of Auckland Clocktower")
-        
-        origin = user_input.origin
-        destination = user_input.destination
-        
-        print origin
-
 if __name__ == "__main__":
     app.run()
