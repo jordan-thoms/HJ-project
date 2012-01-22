@@ -152,20 +152,22 @@ class BusStopSchedule(Common):
 
 class Route:
     def GET(self):
-        
         user_input = web.input(origin="1 George Street, Newmarket", destination="University Of Auckland Clocktower")
-        url_params = urllib.urlencode({'jp-form-from': user_input.origin, 'jp-form-to': user_input.destination})
-        request = urllib2.Request(url=("http://m.maxx.co.nz/mobile-journey-detail.aspx?jp-form-to-coords=&jp-form-leave-arrive=A&jp-form-hour=08&jp-form-minute=30&jp-fo-ampm=PM&jp-form-date=16-01-2012&jp-form-index=1&" + url_params))
         
+        url_params = urllib.urlencode({'jp-form-from': user_input.origin, 'jp-form-to': user_input.destination})
+        
+        request = urllib2.Request(url=("http://m.maxx.co.nz/mobile-journey-detail.aspx?jp-form-to-coords=&jp-form-leave-arrive=A&jp-form-hour=08&jp-form-minute=30&jp-fo-ampm=PM&jp-form-date=16-01-2012&jp-form-index=1&" + url_params))
+
         response = urllib2.urlopen(request)
-                soup = BeautifulSoup(response)
-                route_table = soup.find('table', {'id': 'journey-details'})
-                steps =  route_table.findAll('tr')
-                output = ""
-                for step in steps:
-                        output += str(step) + "\n\n\n"
-                
-                return output
+        soup = BeautifulSoup(response)
+        route_table = soup.find('table', {'id': 'journey-details'})
+        steps =  route_table.findAll('tr')
+        output = ""
+        
+        for step in steps:
+            output += str(step) + "\n\n\n"
+
+            return output
     
     def POST(self):
         '''
