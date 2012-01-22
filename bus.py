@@ -25,7 +25,7 @@ USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/535.7 (
 
 urls = (
     '/route', 'Route',
-    '/stop/(.*)', 'BusStopSchedule',
+    '/stop/([0-9]+)', 'BusStopSchedule',
     '/', 'Index',
 	'/json_search_addr/', 'SearchAddressWrapper',
 )
@@ -35,6 +35,10 @@ app = web.application(urls, globals())
 
 class Common(object):
 	def request(self, url):
+		'''
+		Common code to handle the request and deal with
+		the case where it fail
+		'''
 		headers = {'User-Agent' : USER_AGENT}
 		
 		try:
@@ -46,6 +50,52 @@ class Common(object):
 			raise
 		
 		return response
+		
+	def bus_stop_schedule(self, bus_stop_number, filter_bus_number=[]):
+		'''
+		Get the bus stop number and relevant bus numbers to destination
+
+		bus_stop_number:
+		filter_bus_number: Return only buses found in this list. Default is return all buses
+		
+		Return a list of dictionaries, return empty list if nothing to return
+		'''
+		
+		bus_stop_parsed = []
+		
+		if not bus_stop_number:
+			return bus_stop_parsed
+		
+		url = "http://m.maxx.co.nz/mobile-departure-board.aspx?stop=" + str(bus_stop_number)
+		response = self.request(url)
+
+		soup = BeautifulSoup(response)
+		incoming_buses = soup.findAll('tr', attrs={'data-theme' : 'a'})
+
+		for row in incoming_buses:
+			try:
+				# if no buses then we don't want to do anything
+				if row.contents[1].contents == "NO BUSES":
+					break
+
+				incoming_bus_number = row.contents[1].contents
+				incoming_bus_dest = row.contents[3].contents # bound dest
+				incoming_bus_due = row.contents[5].contents # in minutes
+			except IndexError:
+				# deal with it properly later
+				raise
+
+			incoming_bus = {'bus_number': incoming_bus_number, 'bus_dest': incoming_bus_dest, 'bus_due': incoming_bus_due}
+
+			# return only relevant bus data that I care about
+			if filter_bus_number:
+				# check if you can do that with lists
+				if incoming_bus_number in filter_bus_number:
+					bus_stop_parsed.append(incoming_bus)
+			else:
+				bus_stop_parsed.append(incoming_bus)
+
+		return bus_stop_parsed
 
 class SearchAddressWrapper(Common):
 	'''
@@ -94,37 +144,11 @@ class Index(object):
 	def GET(self):		
 		return render.index()
 
-class BusStopSchedule(object):
-	def GET(self, bus_stop_number=7148, filter_bus_number=[]):
-		'''
-		Get the bus stop number and relevant bus numbers to destination
-		
-		bus_stop_number:
-		filter_bus_number: Return only buses found in this list. Default is return all buses
-		'''
-
-		headers = {'User-Agent' : USER_AGENT}
-		request = urllib2.Request(url=("http://m.maxx.co.nz/mobile-departure-board.aspx?stop=" + str(bus_stop_number)), headers=headers)
-		response = urllib2.urlopen(request)
-
-		soup = BeautifulSoup(response)
-		incoming_buses = soup.findAll('tr', attrs={'data-theme' : 'a'})
-		
-		bus_stop_parsed = []
-		for row in incoming_buses:
-			incoming_bus_number = row.contents[1].contents
-			incoming_bus_dest = row.contents[3].contents # bound dest
-			incoming_bus_due = row.contents[5].contents # in minutes
-
-			# return only relevant bus data that I care about
-			if filter_bus_number:
-				# check if you can do that with lists
-				if incoming_bus_number in filter_bus_number:
-					bus_stop_parsed.append({'bus_number': incoming_bus_number, 'bus_dest': incoming_bus_dest, 'bus_due': incoming_bus_due})
-			else:
-				bus_stop_parsed.append({'bus_number': incoming_bus_number, 'bus_dest': incoming_bus_dest, 'bus_due': incoming_bus_due})
-		
-		return render.bus_stop_schedule(bus_stop_parsed)
+class BusStopSchedule(Common):
+	def GET(self, bus_stop_number):
+		return self.bus_stop_schedule(bus_stop_number)
+	def POST(self, bus_stop_number):
+		return self.bus_stop_schedule(bus_stop_number)
 
 class Route:
 	def GET(self):
