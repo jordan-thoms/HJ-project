@@ -73,14 +73,16 @@ class Common(object):
         incoming_buses = soup.findAll('tr', attrs={'data-theme' : 'a'})
         
         for row in incoming_buses:
+            row = row.findAll('td')
+            
             try:
                 # if no buses then we don't want to do anything
-                if row.contents[1].contents == "NO BUSES":
+                if row[0].contents == "NO BUSES":
                     break
                 
-                incoming_bus_number = row.contents[1].contents
-                incoming_bus_dest = row.contents[3].contents # bound dest
-                incoming_bus_due = row.contents[5].contents # in minutes
+                incoming_bus_number = row[0].contents
+                incoming_bus_dest = row[1].contents # bound dest
+                incoming_bus_due = row[2].contents # in minutes
             except IndexError:
                 # deal with it properly later
                 raise
