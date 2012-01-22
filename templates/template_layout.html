@@ -6,8 +6,8 @@ $def with (content)
 	<title>Bus</title>
 	<link rel="stylesheet" href="./static/bus.css">
 	<style type="text/css">
-	  /* bring in the claro theme */
-	  @import "http://ajax.googleapis.com/ajax/libs/dojo/1.6/dijit/themes/claro/claro.css";
+		/* bring in the claro theme */
+		@import "http://ajax.googleapis.com/ajax/libs/dojo/1.6/dijit/themes/claro/claro.css";
 	</style>
     <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.6.0/dojo/dojo.xd.js"></script>
     <script>
@@ -20,7 +20,7 @@ $def with (content)
 	            id: "origin",
 	            name: "origin",
 	            value: "",
-	            store: new dojox.data.QueryReadStore({url:'/json_search_addr/'}),
+	            store: new dojox.data.QueryReadStore({url:'/json_search_addr'}),
 	            searchAttr: "address"
 	        }, "origin");
 	
@@ -28,7 +28,7 @@ $def with (content)
 	            id: "destination",
 	            name: "destination",
 	            value: "",
-	            store: new dojox.data.QueryReadStore({url:'/json_search_addr/'}),
+	            store: new dojox.data.QueryReadStore({url:'/json_search_addr'}),
 	            searchAttr: "address"
 	        }, "destination");
 		});

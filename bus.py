@@ -27,7 +27,7 @@ urls = (
     '/route', 'Route',
     '/stop/([0-9]+)', 'BusStopSchedule',
     '/', 'Index',
-    '/json_search_addr/', 'SearchAddressWrapper',
+    '/json_search_addr', 'SearchAddressWrapper',
 )
 
 render = web.template.render('templates/', base='template_layout')
