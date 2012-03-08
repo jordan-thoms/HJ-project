@@ -1,1 +1,44 @@
-$def with (bus_stop_parsed)
+$def with (whole_bus_schedule)
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="generator" content="HTML Tidy for Linux/x86 (vers 11 February 2007), see www.w3.org" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="format-detection" content="telephone=no" />
+	<!-- refresh every 5 seconds -->
+	<meta http-equiv="refresh" content="5">
+    <link rel="stylesheet" type="text/css" href="/static/maxx_mobile.css" />
+
+    <title>MAXX Mobile</title>
+</head>
+
+<body>
+
+    <div class="mobile-content">
+        <a id="home-link" href="/mobile-home.aspx" class="ui-btn-right" data-role="button" data-icon="home" data-iconpos="notext" data-direction="reverse">Home</a>
+
+        <div class="data-role-page">
+            <a id="back-link" href="/mobile-home.aspx">Back</a>
+
+            <form action="/mobile-departure-board.aspx" method="get" data-role="stop" class="data-role-stop" style="position:relative;">
+                <label id="departures-stop-label" for="departures-stop" style="font-weight: bold;">Search:</label> <input type="text" data-theme="d" name="stop" id="departures-stop" value="7148" /><input type="submit" value="Go" id="go-button" class="submit-button" />
+            </form><span style="display: block; margin-top: 9px;"><a href="/mobile-fms.aspx?stop=7148">7148 - 36 Symonds St - S3</a></span>
+
+            <table id="departures" class="result-list" data-role="listview" data-theme="d" data-inset="true" cellspacing="0">
+                <tbody>
+					<tr class="data-theme-b" data-theme="b">
+                        <td>ROUTE</td>
+                        <td>DESTINATION</td>
+                        <td>DUE</td>
+                    </tr>
+
+                    $:whole_bus_schedule
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="mobile-footer">
+    </div>
+</body>
+</html>

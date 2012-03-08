@@ -25,12 +25,14 @@ USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/535.7 (
 
 urls = (
     '/route', 'Route',
-    '/stop/([0-9]+)', 'BusStopSchedule',
+    '/stop/([0-9]+)', 'BusStopSchedulePage',
     '/', 'Index',
-    '/json_search_addr', 'SearchAddressWrapper',
+    '/json/stop/([0-9]+)', 'BusStopScheduleJson',
+    '/json/search_addr', 'SearchAddressWrapper',
 )
 
 render = web.template.render('templates/', base='template_layout')
+render_without_layout = web.template.render('templates/')
 app = web.application(urls, globals())
 
 class Common(object):
@@ -80,9 +82,9 @@ class Common(object):
                 if row[0].contents == "NO BUSES":
                     break
                 
-                incoming_bus_number = row[0].contents
-                incoming_bus_dest = row[1].contents # bound dest
-                incoming_bus_due = row[2].contents # in minutes
+                incoming_bus_number = row[0].contents[0]
+                incoming_bus_dest = row[1].contents[0] # bound dest
+                incoming_bus_due = row[2].contents[0] # in minutes
             except IndexError:
                 # deal with it properly later
                 raise
@@ -146,11 +148,32 @@ class Index(object):
     def GET(self):
         return render.index()
 
-class BusStopSchedule(Common):
+class BusStopScheduleJson(Common):
     def GET(self, bus_stop_number):
         return self.bus_stop_schedule(bus_stop_number)
     def POST(self, bus_stop_number):
         return self.bus_stop_schedule(bus_stop_number)
+
+class BusStopSchedulePage(Common):
+    def GET(self, bus_stop_number):
+
+        bus_schedule = self.bus_stop_schedule(bus_stop_number)
+        
+        whole_bus_schedule = ""
+        
+        for bus in bus_schedule:
+            bus_html = """<tr class="data-theme-a" data-theme="a">
+                <td>{route}</td>
+                <td>{destination}</td>
+                <td>{due}</td>
+            </tr>""".format(
+            route=(bus['bus_number']).encode('utf-8'),
+            destination=(bus['bus_dest']).encode('utf-8'),
+            due=(bus['bus_due']).encode('utf-8'))
+            
+            whole_bus_schedule = whole_bus_schedule + bus_html
+        
+        return render_without_layout.bus_stop_schedule(whole_bus_schedule)
 
 class Route:
     def GET(self):
