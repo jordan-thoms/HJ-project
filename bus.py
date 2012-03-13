@@ -21,6 +21,8 @@ import urllib2, urllib
 import web
 from web import form
 
+from pprint import pprint
+
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_2) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7"
 
 urls = (
@@ -65,9 +67,6 @@ class Common(object):
         
         bus_stop_parsed = []
         
-        if not bus_stop_number:
-            return bus_stop_parsed
-        
         url = "http://m.maxx.co.nz/mobile-departure-board.aspx?stop=" + str(bus_stop_number)
         response = self.request(url)
         
@@ -86,8 +85,9 @@ class Common(object):
                 incoming_bus_dest = row[1].contents[0] # bound dest
                 incoming_bus_due = row[2].contents[0] # in minutes
             except IndexError:
-                # deal with it properly later
-                raise
+                print "IndexError with extraction"
+                pprint(row)
+                break
             
             incoming_bus = {'bus_number': incoming_bus_number, 'bus_dest': incoming_bus_dest, 'bus_due': incoming_bus_due}
             
@@ -173,7 +173,7 @@ class BusStopSchedulePage(Common):
             
             whole_bus_schedule = whole_bus_schedule + bus_html
         
-        return render_without_layout.bus_stop_schedule(whole_bus_schedule)
+        return render_without_layout.bus_stop_schedule(whole_bus_schedule, bus_stop_number)
 
 class Route:
     def GET(self):

@@ -1,4 +1,4 @@
-$def with (whole_bus_schedule)
+$def with (whole_bus_schedule, bus_stop_number)
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta name="generator" content="HTML Tidy for Linux/x86 (vers 11 February 2007), see www.w3.org" />
@@ -21,8 +21,8 @@ $def with (whole_bus_schedule)
             <a id="back-link" href="/mobile-home.aspx">Back</a>
 
             <form action="/mobile-departure-board.aspx" method="get" data-role="stop" class="data-role-stop" style="position:relative;">
-                <label id="departures-stop-label" for="departures-stop" style="font-weight: bold;">Search:</label> <input type="text" data-theme="d" name="stop" id="departures-stop" value="7148" /><input type="submit" value="Go" id="go-button" class="submit-button" />
-            </form><span style="display: block; margin-top: 9px;"><a href="/mobile-fms.aspx?stop=7148">7148 - 36 Symonds St - S3</a></span>
+                <label id="departures-stop-label" for="departures-stop" style="font-weight: bold;">Search:</label> <input type="text" data-theme="d" name="stop" id="departures-stop" value="$:bus_stop_number" /><input type="submit" value="Go" id="go-button" class="submit-button" />
+            </form><span style="display: block; margin-top: 9px;"><a href="/mobile-fms.aspx?stop=$:bus_stop_number">$:bus_stop_number</a></span>
 
             <table id="departures" class="result-list" data-role="listview" data-theme="d" data-inset="true" cellspacing="0">
                 <tbody>
@@ -39,6 +39,7 @@ $def with (whole_bus_schedule)
     </div>
 
     <div id="mobile-footer">
+        MAXX improved by Hengjie
     </div>
 </body>
 </html>
